@@ -8,26 +8,41 @@ module.exports = {
     getAllUsers: function(req, res, next){
         console.log('GET ALL USERS');
 
-		User.then((result) => {
-            logger.info('User loaded succesfully');
-            res.send(result.docs);
+        User.find({}, {})
+            .then((result) => {
+                console.log('Users loaded OK!!' + result);
+                res.send(result.docs);
             })
             .catch(error => {
-            console.log(error, 'Error while loading user')
-            res.status(500);
-            res.send(error.message);
-        });
+                console.log(error, 'Error while loading user')
+                res.status(500);
+                res.send(error.message);
+            });
 
         next();
     },
 
     getUserById: function( req, res, next){
         console.log('GET USER ID : ' + req.params.id);
+
+        User.findOne({
+                id: req.params.id
+            })
+            .then((user) => {
+                console.log('User loaded succesfully');
+                res.send(user);
+            })
+            .catch(error => {
+                console.log(error, 'Error while loading user')
+                res.status(500);
+                res.send(Object.values(error.errors).map(e => e.message));
+            });
+
         next();
     },
 
     createUser: function(req, res, next) {
-        console.log('Creating USER.....');
+        console.log('Creating USER...');
 
         if (!req.is('application/json')) {
 			return next(
@@ -42,7 +57,7 @@ module.exports = {
                 res.send(user);
             })
             .catch(error => {
-                console.log(error, 'Error saving user')
+                console.log(error, 'Error saving user');
                 res.status(500);
                 res.send(Object.values(error.errors).map(e => e.message));
             });

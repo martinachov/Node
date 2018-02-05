@@ -6,6 +6,7 @@ var restify = require('restify');
 var mongoose = require('mongoose');
 var restifyPlugins = require('restify-plugins');
 
+mongoose.Promise = global.Promise;
 /**
   * Initialize Server
   */
